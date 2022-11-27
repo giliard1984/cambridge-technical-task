@@ -8,31 +8,49 @@ export interface IActivities {
 export interface IActivity {
   activity_name: string,
   order: number,
-  questions: {
-    // Sequential flow
-    is_correct?: boolean,
-    stimulus?: string,
-    order: number,
-    user_answers?: Boolean[],
-    feedback?: string
-    // Round flow
-    round_title?: string,
-    questions?: {
-      is_correct: boolean,
-      stimulus: string,
-      order: number,
-      user_answers: Boolean[],
-      feedback: string
-    }[]
-  }[]
+  questions: IQuestions[]
+}
+
+export interface IQuestions {
+  // Sequential flow
+  is_correct?: boolean,
+  stimulus?: string,
+  order: number,
+  user_answers?: Boolean[],
+  feedback?: string
+  // Round flow
+  round_title?: string,
+  questions?: IQuestion[]
+}
+
+export interface IQuestion {
+  is_correct: boolean,
+  stimulus: string,
+  order: number,
+  user_answers: Boolean[],
+  feedback: string
+}
+
+export interface IActivityResult {
+  activity: string,
+  completion: number,
+  score: number,
+  totalQuestions: number,
+  totalAnswered: number,
+  correctAnswers: number,
+  rounds: IRoundResult[]
+}
+
+export interface IRoundResult {
+  round: string,
+  completion: number,
+  score: number,
+  totalQuestions: number,
+  totalAnswered: number,
+  correctAnswers: number,
+  correctOnes: number[]
 }
 
 export type ActivitiesContextType = {
   activities: IActivities;
-  answerQuestion: (
-    activity_id: number,
-    round: number | null,
-    question_id: number,
-    answer: boolean
-  ) => void;
 };

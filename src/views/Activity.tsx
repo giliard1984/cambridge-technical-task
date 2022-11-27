@@ -150,7 +150,7 @@ const Activity: React.FC<Props> = (props) => {
           setIsRoundFlow(false);
 
           computeResults(activities);
-          navigate(`/activity/${activityName}/result`, { state: { id: activity?.order }});
+          navigate(`/results/${activityName}`, { state: { id: activity?.order }});
         }
       }
 
@@ -171,7 +171,7 @@ const Activity: React.FC<Props> = (props) => {
         setQuestion(undefined);
 
         computeResults(activities);
-        navigate(`/activity/${activityName}/result`, { state: { id: activity?.order }});
+        navigate(`/results/${activityName}`, { state: { id: activity?.order }});
       }
     }  
   }
@@ -199,15 +199,15 @@ const Activity: React.FC<Props> = (props) => {
 
   const Question = () => {
     if (isRoundFlow && !startedRound) {
-      // return <a onClick={() => StartRound()}>Start</a>;
       return <a>Round starting in {counter} second(s)</a>;
     }
 
     return (
       <React.Fragment>
         <Col span={24}>
+          {/* TOOD: Create a sanitiser to prevent other tags from being inject as dangerouslySetInnerHTML is not safe */}
           <div
-            style={{ width: '100%', backgroundColor: '#f2f2f2', padding: '5% 0px', fontSize: '18px'}}
+            style={{ width: '100%', backgroundColor: '#f2f2f2', padding: '5% 5%', fontSize: '18px'}}
             dangerouslySetInnerHTML={{__html: HighlightedText(question?.stimulus)}}
           ></div>
         </Col>

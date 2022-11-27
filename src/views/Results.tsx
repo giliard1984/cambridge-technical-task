@@ -1,17 +1,19 @@
 import React, { useContext, useCallback, useEffect } from 'react';
-import { Row, Col, Typography } from 'antd';
+import { useLocation } from 'react-router-dom';
+import { Row, Col, Typography, Space, Divider } from 'antd';
 
 import { ActivitiesContext } from '../contexts/ActivitiesContext';
-import { IActivity } from '../helpers/types';
+import { IActivity, IActivityResult, IQuestions, IQuestion } from '../helpers/types';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const Results: React.FC = () => {
   const { activities, results, computeResults } = useContext(ActivitiesContext);
+  let { state } = useLocation();
 
   useEffect(() => {
     if (activities) {
-      computeResults(activities);
+      computeResults(activities); 
     }
   }, [activities]);
 
@@ -21,29 +23,47 @@ const Results: React.FC = () => {
     let components: any = [];
 
     if (results.length > 0) {
-      activities?.activities.forEach((a: IActivity) => {
-        const isRound = a.questions.every((q: any) => q.hasOwnProperty('round_title'));
+      // In case an order id is passed down to the state, we should filter it accordingly
+      let data = activities?.activities;
+      if (state?.id && state.id >= 0) {
+        data = activities?.activities.filter((a: IActivity) => a.order === state.id);
+      }
+
+      data.forEach((a: IActivity) => {
+        const isRound = a.questions.every((q: IQuestions) => q.hasOwnProperty('round_title'));
 
         // Adds activity component
         components.push(
           <React.Fragment>
-            <Col key={`activity_order_${a.order}`} xs={24} sm={24} md={20} lg={16} xl={16} style={{ marginTop: '20px', marginBottom: '0px' }}>{a.activity_name}</Col>
-            {
-              !isNaN(results?.filter((x: any) => x.activity === a.activity_name)[0]?.totalAnswered / results?.filter((x: any) => x.activity === a.activity_name)[0]?.totalQuestions) &&
-                <Col key={`activity_order_${a.order}_stats`} xs={24} sm={24} md={20} lg={16} xl={16} style={{ marginTop: '0px', marginBottom: '10px' }}>
-                  {(results?.filter((x: any) => x.activity === a.activity_name)[0]?.totalAnswered / results?.filter((x: any) => x.activity === a.activity_name)[0]?.totalQuestions) * 100 + '% completed'}
-                </Col>
-            }
+            <Col key={`activity_order_${a.order}`} xs={24} sm={24} md={20} lg={16} xl={16}><Title level={5}>{a.activity_name}</Title></Col>
+            <Row wrap align="middle" justify="center" className='fullWidth' style={{ marginBottom: '10px'}}>
+              {
+                !isNaN(results?.filter((x: IActivityResult) => x.activity === a.activity_name)[0]?.totalAnswered / results?.filter((x: any) => x.activity === a.activity_name)[0]?.totalQuestions) &&
+                  <React.Fragment>
+                    <Col key={`activity_order_${a.order}_stats_completion`} xs={24} sm={12} md={20} lg={16} xl={16}>
+                      <Space>
+                        <Text>
+                          {(results?.filter((x: any) => x.activity === a.activity_name)[0]?.totalAnswered / results?.filter((x: any) => x.activity === a.activity_name)[0]?.totalQuestions) * 100 + '% completed'}
+                        </Text>
+                        <Divider type="vertical" />
+                        <Text>
+                          {'Score: ' + (results?.filter((x: any) => x.activity === a.activity_name)[0]?.score) + '%'}
+                        </Text>
+                      </Space>
+                    </Col>
+                  </React.Fragment>
+              }
+            </Row>
           </React.Fragment>
         );
 
         if (isRound) {
-          a.questions.forEach((r: any, index: number) => {
+          a.questions.forEach((r: IQuestions) => {
             components.push(
               <Col key={`activity_order_${a.order}_round_order_${r.order}`} xs={24} sm={24} md={20} lg={16} xl={16}style={{ marginTop: '20px', marginBottom: '10px' }}>{r.round_title}</Col>
             );
 
-            r.questions.forEach((q: any, index: number) => {
+            r.questions?.forEach((q: IQuestion, index: number) => {
               components.push(
                 <Col key={`activity_${a.order}_round_order_${r.order}_question_${q.order}`} xs={24} sm={24} md={20} lg={16} xl={16}>
                   <Row>
@@ -63,7 +83,7 @@ const Results: React.FC = () => {
             }); 
           });
         } else {
-          a.questions.forEach((q: any, index: number) => {
+          a.questions.forEach((q: IQuestions, index: number) => {
             components.push(
               <Col key={`activity_${a.order}_question_${q.order}`} xs={24} sm={24} md={20} lg={16} xl={16}>
                 <Row>
@@ -73,8 +93,8 @@ const Results: React.FC = () => {
                     </div>
                   </Col>
                   <Col span={8} style={{ width: '100%', height: '60px', backgroundColor: '#f2f2f2', padding: '20px 20px 20px 0px', textAlign: 'right', verticalAlign: 'middle'}}>
-                    <div style={{ color: q.user_answers.length > 0 && q.user_answers.at(-1) === q.is_correct ? 'green' : q.user_answers.length === 0 ? 'grey' : 'red' }}>
-                      {q.user_answers.length > 0 && q.user_answers.at(-1) === q.is_correct ? 'Correct' : q.user_answers.length === 0 ? 'Pending' : 'Incorrect'}
+                    <div style={{ color: q.user_answers && q.user_answers.length > 0 && q.user_answers.at(-1) === q.is_correct ? 'green' : q.user_answers && q.user_answers.length === 0 ? 'grey' : 'red' }}>
+                      {q.user_answers && q.user_answers.length > 0 && q.user_answers.at(-1) === q.is_correct ? 'Correct' : q.user_answers && q.user_answers.length === 0 ? 'Pending' : 'Incorrect'}
                     </div>
                   </Col>
                 </Row>

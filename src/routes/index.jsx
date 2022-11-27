@@ -4,7 +4,6 @@ import { createBrowserRouter } from "react-router-dom";
 import Main from '../views/Main';
 import Activity from '../views/Activity';
 import Results from '../views/Results';
-import ActivityResult from '../views/ActivityResult';
 
 // Layouts
 import DefaultLayout from "../layouts/Default";
@@ -29,10 +28,6 @@ const router = createBrowserRouter([
         path: ":activityName",
         element: <Activity />,
       },
-      {
-        path: ":activityName/result",
-        element: <ActivityResult />,
-      },
     ],
   },
   {
@@ -40,7 +35,7 @@ const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       {
-        path: "/results",
+        path: "/results/:activityName",
         element: <Results />,
       }
     ]
