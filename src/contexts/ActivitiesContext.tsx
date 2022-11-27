@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState, useCallback } from "react";
-import { IActivities, IActivity, IQuestions, IQuestion, IActivityResult, IRoundResult } from "../helpers/types";
+import { IActivities, IActivity, IQuestions, IActivityResult, IRoundResult } from "../helpers/types";
 // import axios from 'axios'; // I am keeping it in here for demo purposes on how to use axios
 
 const ActivitiesContext = createContext<any>(undefined);

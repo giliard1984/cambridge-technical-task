@@ -15,7 +15,7 @@ const Results: React.FC = () => {
     if (activities) {
       computeResults(activities); 
     }
-  }, [activities]);
+  }, [activities, computeResults]);
 
   // Abstract ResultsComponent
   const ResultsComponent = useCallback(() => {
@@ -106,7 +106,7 @@ const Results: React.FC = () => {
     }
 
     return components;
-  }, [results]);
+  }, [results, activities?.activities, state.id]);
 
   return (
     <div className="App">

@@ -32,6 +32,8 @@ const ListGeneric: React.FC<Props> = (props) => {
         renderItem={
           (item) =>
             <List.Item
+              // Used eslint command in order to remove anchor-is-valid warning
+              // eslint-disable-next-line
               actions={[<a key="list-loadmore-edit">
                 {
                 results.length === 0 ?
@@ -46,7 +48,7 @@ const ListGeneric: React.FC<Props> = (props) => {
         }
       />
     );
-  }, [props?.data?.activities, results]);
+  }, [props?.data?.activities, results, props?.data?.name]);
 
   return (
     <React.Fragment>

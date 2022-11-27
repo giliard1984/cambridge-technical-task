@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { Row, Col, Typography, Button } from 'antd';
 
@@ -7,9 +7,7 @@ import { IActivity } from '../helpers/types';
 
 const { Title, Paragraph } = Typography;
 
-interface Props {}
-
-const Activity: React.FC<Props> = (props) => {
+const Activity: React.FC = () => {
   let navigate = useNavigate(); 
   const { activities, computeResults } = useContext(ActivitiesContext);
   let { activityName } = useParams();
@@ -29,7 +27,7 @@ const Activity: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (state.id && activities) {
-      const activity = activities.activities.filter((a: any) => a.order == state.id)[0];
+      const activity = activities.activities.filter((a: any) => a.order === state.id)[0];
 
       // Iterate through all questions from the activity, in in case all records present a round_title, we set the flow ad being as round
       // This flag is important to set flow properly
@@ -100,7 +98,7 @@ const Activity: React.FC<Props> = (props) => {
 
     for (let o = 1; o <= numberOfOccurences; o++) {
       const processedText = value.split("").map((c: string, index: number) => {
-        if (c == '*') {
+        if (c === '*') {
           c = index % 2 > 0 ? '<b>' : '</b>';
         }
         return c;
@@ -112,21 +110,23 @@ const Activity: React.FC<Props> = (props) => {
     return newValue;
   };
 
-  const StartRound = () => {
-    const roundObj = activity?.questions.filter(r => r.round_title === round)[0];
+  const StartRound = useCallback(() => {
+    if (activity) {
+      const roundObj = activity?.questions.filter(r => r.round_title === round)[0];
 
-    if (roundObj?.questions) {
-      setQuestion(roundObj.questions[nextQuestion]);
+      if (roundObj?.questions) {
+        setQuestion(roundObj.questions[nextQuestion]);
 
-      if (nextQuestion < roundObj.questions.length) {
-        setNextQuestion(nextQuestion + 1);
+        if (nextQuestion < roundObj.questions.length) {
+          setNextQuestion(nextQuestion + 1);
+        }
       }
+
+      setStartedRound(true);
     }
+  }, [activity]);
 
-    setStartedRound(true);
-  };
-
-  const AnswerQuestion = (isCorrect: Boolean) => {
+  const AnswerQuestion = useCallback((isCorrect: Boolean) => {
     if (isRoundFlow) {
       // Updates user_answers
       activities.activities.filter((a: IActivity) => a.order === state.id)[0].questions.filter((r: any) => r.round_title === round)[0].questions.filter((q: string, index: number) => index === nextQuestion - 1)[0].user_answers.push(isCorrect)
@@ -174,7 +174,7 @@ const Activity: React.FC<Props> = (props) => {
         navigate(`/results/${activityName}`, { state: { id: activity?.order }});
       }
     }  
-  }
+  }, [isRoundFlow, activities, nextQuestion]);
 
   // When dealing with rounds, count 2 seconds and start it
   const [counter, setCounter] = useState(0);
@@ -199,7 +199,8 @@ const Activity: React.FC<Props> = (props) => {
 
   const Question = () => {
     if (isRoundFlow && !startedRound) {
-      return <a>Round starting in {counter} second(s)</a>;
+      // eslint-disable-next-line
+      return <a>Round starting in {counter} second(s)</a>; // Used eslint command in order to remove anchor-is-valid warning
     }
 
     return (
