@@ -2,6 +2,25 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Cloning and Starting this project
+Please navigate to the folder you want to clone this project into
+
+Run the following command:
+git clone https://github.com/giliard1984/cambridge-technical-task.git
+
+You will need to npm install, as node_modules is not commited by default. If you come across an issue, please guarantee your node version (node -v) is v19.0.1 (I used the latest version)
+
+After installing dependencies, please run "npm start" or "npm run start". This app will start on port 3000
+
+Note: If for some reason, you are not able to access git repository, please contact me, so I can sort this out
+
+URL: http://localhost:3000/
+
+## GCP Deployment
+
+I've deployed it to http://35.192.215.156:3000 , so you can have fun checking the project on a mobile device for instance (I'd recommend hidding toolbar, so you can have a better experience with the app)
+
+
 ## Available Scripts
 
 In the project directory, you can run:
