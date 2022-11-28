@@ -87,7 +87,7 @@ const Activity: React.FC = () => {
 
   // This functions takes a text into consideration and highligh all sentences in between asterisks/stars(*)
   // TODO: Abstract this function
-  const HighlightedText = (value : any) => {
+  const HighlightedText = (value : string) => {
     if (!value) {
       // TODO: Add a loader or skeleton
       return "Processing question...";
@@ -96,10 +96,12 @@ const Activity: React.FC = () => {
     const numberOfOccurences = (value.match(/\*/g) || []).length;
     let newValue:string = '';
 
+    let startOccurrence = 1;
     for (let o = 1; o <= numberOfOccurences; o++) {
       const processedText = value.split("").map((c: string, index: number) => {
         if (c === '*') {
-          c = index % 2 > 0 ? '<b>' : '</b>';
+          c = startOccurrence % 2 > 0 ? '<b>' : '</b>';
+          startOccurrence++;
         }
         return c;
       });
@@ -124,7 +126,7 @@ const Activity: React.FC = () => {
 
       setStartedRound(true);
     }
-  }, [activity]);
+  }, [activity, round]);
 
   const AnswerQuestion = useCallback((isCorrect: Boolean) => {
     if (isRoundFlow) {
@@ -206,10 +208,10 @@ const Activity: React.FC = () => {
     return (
       <React.Fragment>
         <Col span={24}>
-          {/* TOOD: Create a sanitiser to prevent other tags from being inject as dangerouslySetInnerHTML is not safe */}
+          {/* TODO: Create a sanitiser to prevent other tags from being inject as dangerouslySetInnerHTML is not safe */}
           <div
             style={{ width: '100%', backgroundColor: '#f2f2f2', padding: '5% 5%', fontSize: '18px'}}
-            dangerouslySetInnerHTML={{__html: HighlightedText(question?.stimulus)}}
+            dangerouslySetInnerHTML={{ __html: HighlightedText(question?.stimulus) }}
           ></div>
         </Col>
         <Col span={10}>

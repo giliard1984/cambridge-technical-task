@@ -48,7 +48,7 @@ const ListGeneric: React.FC<Props> = (props) => {
         }
       />
     );
-  }, [props?.data?.activities, results, props?.data?.name]);
+  }, [props?.data?.activities, results, navigate, props?.data?.name]);
 
   return (
     <React.Fragment>
